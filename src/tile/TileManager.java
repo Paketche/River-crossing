@@ -148,11 +148,12 @@ public class TileManager extends JPanel{
 	private void travel(Point p){
 		System.out.println("destination : " + p.y + " " + p.x);
 		Post destination = (Post) tileButtons[p.y][p.x].getTile();
+		System.out.println("destination: "+destination.toString());
 		System.out.println("man at : " + man.y + " " + man.x);
 		Post root = (Post) tileButtons[man.y][man.x].getTile();
 		Post current = root;
-
-		travel: while (current != destination){
+		int z =0;
+		travel: while (current != destination&& z<10){
 			/*
 			 * this for loop scans through the edges of the current post. If it finds
 			 * an edge that is not traversed it moves to the other node of the edge
@@ -164,6 +165,7 @@ public class TileManager extends JPanel{
 				System.out.println("going trough edges");
 				if (current.edges[i] == null){
 					System.out.println("edge is null: skipping");
+					System.out.println("iteration :" + i);
 					continue;
 				}
 				if (!current.edges[i].isTraversed()){
@@ -180,6 +182,8 @@ public class TileManager extends JPanel{
 								System.out.println("Traversing edge");
 								current.edges[i].leaveCrumb(true);
 								current = current.edges[i].nodes[j];
+								System.out.println("current:" +current.toString());
+								System.out.println("destination: "+destination.toString());
 								break;
 							}
 						}
@@ -230,29 +234,55 @@ public class TileManager extends JPanel{
 					}
 				}
 			}
+			z++;
 		}
 		tileButtons[man.y][man.x].setTile(Tile.getTile(tileButtons[man.y][man.x].getTile().identifier-1));
+		setEdges(new Point(man.x,man.y));
 		// System.out.println(" exited travel loop");
 		/*
 		 * reset the planks to not traversed and take any crumbs this prepares the
 		 * board for a new travel
 		 */
+		/*
 		for (int i = 0; i < tileButtons.length; i++){
 			for (int j = 0; j < tileButtons[i].length; j++){
 				if (tileButtons[i][j].getTile() == current){
-					System.out.println("putting man");
 					tileButtons[i][j].setTile(Tile.getTile(tileButtons[p.y][p.x].getTile().identifier+1));
-					System.out.println(tileButtons[i][j].getTile().identifier + " " + j + " " + i);
-					System.out.println(tileButtons[i][j].getTile().identifier);
 					man = new Point(j, i);
-					setEdges(man);
 				}
 				// we check if the buttons holds a plank tile
 				if (compareTo(tileButtons[i][j].getTile().identifier, Tile.PLANK1, Tile.PLANK2)){
 					Plank plank = (Plank) tileButtons[i][j].getTile();
 					plank.traverse(false);
 					plank.leaveCrumb(false);
-
+				}
+			}
+		}
+		*/
+		for (int i = 0; i < tileButtons.length; i++){
+			for (int j = 0; j < tileButtons[i].length; j++){
+				if (tileButtons[i][j].getTile() == current){
+					tileButtons[i][j].setTile(Tile.getTile(tileButtons[p.y][p.x].getTile().identifier+1));
+					man = new Point(j, i);
+				}
+				switch (tileButtons[i][j].getTile().identifier) {
+					case Tile.PLANK1:
+					case Tile.PLANK1_MAN:
+					case Tile.PLANK2:
+					case Tile.PLANK2_MAN:
+						Plank plank = (Plank) tileButtons[i][j].getTile();
+						plank.traverse(false);
+						plank.leaveCrumb(false);
+						setNodes(new Point(j, i));
+						break;
+					case Tile.STUMP1:
+					case Tile.STUMP1_MAN:
+					case Tile.STUMP2:
+					case Tile.STUMP2_MAN:
+					case Tile.STUMP3:
+					case Tile.STUMP3_MAN:
+						setEdges(new Point(j, i));
+						break;
 				}
 			}
 		}
