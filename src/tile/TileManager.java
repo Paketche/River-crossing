@@ -88,6 +88,7 @@ public class TileManager extends JPanel{
 						Tile.STUMP2_MAN, Tile.STUMP3, Tile.STUMP3_MAN)){
 			tileButtons[p.y][p.x].setTile(Tile.getTile(Tile.PLANK1));
 			tileButtons[p.y][p.x].getTile().setTileButton(tileButtons[p.y][p.x]);
+
 		}
 		// else put a horizontal plank in that place
 		else{
@@ -101,12 +102,28 @@ public class TileManager extends JPanel{
 	private void takePlank(Point p){
 		// put the tile that you are taking in the inventory and replace it with a
 		// water tile
-		inventory.putaTile();
+		inventory.putaTile(tileButtons[p.y][p.x].getTile());
+
+		Plank plank = compareTo(tileButtons[p.y][p.x].getTile().identifier, Tile.PLANK1, Tile.PLANK2)
+				? (Plank) tileButtons[p.y][p.x].getTile() : null;
+
+		for (int i = 0; i < plank.adjecentPlanks.length && plank.adjecentPlanks[i] != null; i++){
+			// we change all of the adjacent planks into water
+			// save the position of the adjacent plank because we lose it when we
+			// change the tile
+			Point point = plank.adjecentPlanks[i].getTileButton().location;
+			// change the tile in adjacent plank's tile button
+			plank.adjecentPlanks[i].getTileButton().setTile(Tile.getTile(Tile.WATER));
+			// after you have changed the tile in the button reference the button in
+			// the new tile that you have put
+			tileButtons[point.y][point.x].getTile().setTileButton(tileButtons[point.y][point.x]);
+		}
 
 		// remove the references of this plank in the stumps on both its sides
 		tileButtons[p.y][p.x].setTile(Tile.getTile(Tile.WATER));
 		tileButtons[p.y][p.x].getTile().setTileButton(tileButtons[p.y][p.x]);
 		setBoard();
+		mendPlanks();
 	}
 
 	private void travel(Point p){
@@ -115,6 +132,8 @@ public class TileManager extends JPanel{
 		Post current = root;
 		System.out.println(man);
 		travel: while (current != destination){
+			System.out.println();
+			System.out.println(current.getTileButton().location);
 			/*
 			 * this for loop scans through the edges of the current post. If it finds
 			 * an edge that is not traversed it moves to the other node of the edge
@@ -127,6 +146,11 @@ public class TileManager extends JPanel{
 				}
 				if (!current.edges[i].isTraversed()){
 					current.edges[i].traverse(true);
+
+					for (int j = 0; j < current.edges[i].adjecentPlanks.length
+							&& current.edges[i].adjecentPlanks[j] != null; j++){
+						current.edges[i].adjecentPlanks[j].traverse(true);
+					}
 					// we look at the nodes of the edge we are about to traverse
 					for (int j = 0; j < current.edges[i].nodes.length; j++){
 						if (current.edges[i].nodes[j] == null){
@@ -136,6 +160,10 @@ public class TileManager extends JPanel{
 						// "traverse" the edge)
 						if (current != current.edges[i].nodes[j]){
 							current.edges[i].leaveCrumb(true);
+							for (int j1 = 0; j1 < current.edges[i].adjecentPlanks.length
+									&& current.edges[i].adjecentPlanks[j1] != null; j1++){
+								current.edges[i].adjecentPlanks[j1].traverse(true);
+							}
 							current = current.edges[i].nodes[j];
 							break;
 						}
@@ -144,8 +172,8 @@ public class TileManager extends JPanel{
 					// enter the next part of the loop
 					continue travel;
 				}
+				System.out.println("is TRaveled" + current.edges[i].getTileButton().location);
 			}
-
 			/*
 			 * the idea is that if the previous for loop exits without continuing to
 			 * another iteration of the while loop that means that the man can't
@@ -205,17 +233,19 @@ public class TileManager extends JPanel{
 		 */
 		setBoard();
 		mendPlanks();
+
 		System.out.println(man);
-		for(int i=0;i<tileButtons.length;i++){
-			for(int j=0;j<tileButtons[i].length;j++){
-				if(tileButtons[i][j].getTile().identifier == Tile.PLANK1){
-					Plank plank = (Plank)tileButtons[i][j].getTile();
+		for (int i = 0; i < tileButtons.length; i++){
+			for (int j = 0; j < tileButtons[i].length; j++){
+				if (tileButtons[i][j].getTile().identifier == Tile.PLANK1){
+					Plank plank = (Plank) tileButtons[i][j].getTile();
 					System.out.println(plank.nodes[0]);
 					System.out.println(plank.nodes[1]);
 					System.out.println();
 				}
 			}
 		}
+
 	}
 
 	private void setNodes(Point p){
@@ -244,10 +274,10 @@ public class TileManager extends JPanel{
 					if ((p.y - 1) >= 0 && compareTo(tileButtons[p.y - 1][p.x].getTile().identifier, Tile.PLANK1)){
 						Plank pl = (Plank) tileButtons[p.y - 1][p.x].getTile();
 						int i = 0;
-						while (i < 3 && currentPlank.adjecentPlanks[i] != null){
+						while (i < 2 && currentPlank.adjecentPlanks[i] != null){
 							i++;
 						}
-						if (i < 3)
+						if (i < 2)
 							currentPlank.adjecentPlanks[i] = pl;
 					}
 				}
@@ -264,10 +294,10 @@ public class TileManager extends JPanel{
 							&& compareTo(tileButtons[p.y + 1][p.x].getTile().identifier, Tile.PLANK1)){
 						Plank pl = (Plank) tileButtons[p.y + 1][p.x].getTile();
 						int i = 0;
-						while (i < 3 && currentPlank.adjecentPlanks[i] != null){
+						while (i < 2 && currentPlank.adjecentPlanks[i] != null){
 							i++;
 						}
-						if (i < 3)
+						if (i < 2)
 							currentPlank.adjecentPlanks[i] = pl;
 					}
 				}
@@ -287,10 +317,10 @@ public class TileManager extends JPanel{
 							&& compareTo(tileButtons[p.y][p.x + 1].getTile().identifier, Tile.PLANK2)){
 						Plank pl = (Plank) tileButtons[p.y][p.x + 1].getTile();
 						int i = 0;
-						while (i < 3 && currentPlank.adjecentPlanks[i] != null){
+						while (i < 2 && currentPlank.adjecentPlanks[i] != null){
 							i++;
 						}
-						if (i < 3)
+						if (i < 2)
 							currentPlank.adjecentPlanks[i] = pl;
 					}
 				}
@@ -306,10 +336,10 @@ public class TileManager extends JPanel{
 					if ((p.x - 1) >= 0 && compareTo(tileButtons[p.y][p.x - 1].getTile().identifier, Tile.PLANK2)){
 						Plank pl = (Plank) tileButtons[p.y][p.x - 1].getTile();
 						int i = 0;
-						while (i < 3 && currentPlank.adjecentPlanks[i] != null){
+						while (i < 2 && currentPlank.adjecentPlanks[i] != null){
 							i++;
 						}
-						if (i < 3)
+						if (i < 2)
 							currentPlank.adjecentPlanks[i] = pl;
 					}
 				}
@@ -392,30 +422,33 @@ public class TileManager extends JPanel{
 	}
 
 	private boolean isManNear(Point p){
+		// is tile below a man
 		if ((p.y + 1) < TileManager.MAP_HEIGTH && compareTo(tileButtons[p.y + 1][p.x].getTile().identifier, Tile.STUMP1_MAN,
 				Tile.STUMP2_MAN, Tile.STUMP3_MAN)){
 			return true;
 		}
-
+		// is tile on the right a man
 		if ((p.x + 1) < TileManager.MAP_WIDTH && compareTo(tileButtons[p.y][p.x + 1].getTile().identifier, Tile.STUMP1_MAN,
 				Tile.STUMP2_MAN, Tile.STUMP3_MAN)){
 			return true;
 		}
-
+		// is tile below a man
 		if ((p.y - 1) >= 0 && compareTo(tileButtons[p.y - 1][p.x].getTile().identifier, Tile.STUMP1_MAN, Tile.STUMP2_MAN,
 				Tile.STUMP3_MAN)){
 			return true;
 		}
-
+		// is tile on the left a man
 		if ((p.x - 1) >= 0 && compareTo(tileButtons[p.y][p.x - 1].getTile().identifier, Tile.STUMP1_MAN, Tile.STUMP2_MAN,
 				Tile.STUMP3_MAN)){
 			return true;
 		}
-
 		return false;
 	}
 
-	public void mendPlanks(){
+	private void mendPlanks(){
+		// this is the most disgusting method i have ever done. I mean look at the
+		// referencing i have done. Do you even reference m8
+
 		// go trough the whole board
 		for (int i = 0; i < tileButtons.length; i++){
 			for (int j = 0; j < tileButtons[i].length; j++){
@@ -423,7 +456,7 @@ public class TileManager extends JPanel{
 					// when you find a plank cast it so we can work on it as a Plank
 					Plank plank = (Plank) tileButtons[i][j].getTile();
 
-					for (int k = 0;k< plank.adjecentPlanks.length&&plank.adjecentPlanks[k] != null; k++){
+					for (int k = 0; k < plank.adjecentPlanks.length && plank.adjecentPlanks[k] != null; k++){
 						// go through the plank's adjacent planks and copy their nodes to
 						// the current one
 						for (int l = 0; l < plank.adjecentPlanks[k].nodes.length; l++){
@@ -432,21 +465,37 @@ public class TileManager extends JPanel{
 							}
 							plank.nodes[l] = plank.adjecentPlanks[k].nodes[l];
 						}
-						for(int l = 0;l < plank.adjecentPlanks[k].adjecentPlanks.length && plank.adjecentPlanks[k].adjecentPlanks[l]!= null;l++ ){
-							for(int m = 0 ;m<plank.adjecentPlanks[k].adjecentPlanks[l].nodes.length;m++){
-								if(plank.adjecentPlanks[k].adjecentPlanks[l].nodes[m]==null){
+						// go through the plank's adjacent planks' adjacent planks
+						for (int l = 0; l < plank.adjecentPlanks[k].adjecentPlanks.length
+								&& plank.adjecentPlanks[k].adjecentPlanks[l] != null; l++){
+
+							// copy their nodes to the current one
+							for (int m = 0; m < plank.adjecentPlanks[k].adjecentPlanks[l].nodes.length; m++){
+								if (plank.adjecentPlanks[k].adjecentPlanks[l].nodes[m] == null){
 									continue;
 								}
 								plank.nodes[m] = plank.adjecentPlanks[k].adjecentPlanks[l].nodes[m];
+							}
+							// for instance if we had a 3 piece plank we would want the
+							// leftmost plank to reference the rightmost plank
+							if (plank.adjecentPlanks[k].adjecentPlanks[l] != plank){
+								int z = 0;
+								while (z < 2 && plank.adjecentPlanks[z] != null){
+									z++;
+								}
+								if (z < 2){
+									plank.adjecentPlanks[z] = plank.adjecentPlanks[k].adjecentPlanks[l];
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+		// but it works
 	}
 
-	private boolean compareTo(int arg1, int... args){
+	public static boolean compareTo(int arg1, int... args){
 		for (int x : args){
 			if (arg1 == x){
 				return true;
