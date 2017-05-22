@@ -4,11 +4,11 @@ import javax.swing.ImageIcon;
 
 class WFB extends Tile{
 
-	public WFB(int ident){
+	WFB(int ident){
 		super(WFB.getAnIcon(ident), ident);
 	}
 
-
+	//get an icon corresponding to a constant fed to the methos
 	private static ImageIcon getAnIcon(int ident){
 		ImageIcon icon;
 		switch (ident) {
