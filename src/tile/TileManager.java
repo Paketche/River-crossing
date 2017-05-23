@@ -3,6 +3,7 @@ package tile;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+
 import javax.swing.JPanel;
 
 public class TileManager extends JPanel{
@@ -14,17 +15,21 @@ public class TileManager extends JPanel{
 
 	public static final int MAP_HEIGTH = 13;
 	public static final int MAP_WIDTH = 9;
-
-	public final int level;
+	
+	//variables that hold information for the game
+	private int level;
 	private Point man;
 	private Point finish;
+	private boolean won;
 
+	
 	private TileButton[][] tileButtons = new TileButton[MAP_HEIGTH][MAP_WIDTH];
 	public final TileHolder inventory = new TileHolder();
 
 	/**
-	 * 
-	 * @param l
+	 * Initializes a Tile manager with the specified level layout 
+	 *  
+	 * @param l Level object
 	 */
 	public TileManager(Level l){
 		super(new GridLayout(TileManager.MAP_HEIGTH, TileManager.MAP_WIDTH));
@@ -42,9 +47,8 @@ public class TileManager extends JPanel{
 						Tile.PLANK1_MAN, Tile.PLANK2_MAN)){
 					// set the location of the man if you can't find them
 					man = new Point(j, i);
-				}
-				else if(tileButtons[i][j].getTile().identifier== Tile.STUMP3){
-					finish = new Point(j,i);
+				} else if (tileButtons[i][j].getTile().identifier == Tile.STUMP3){
+					finish = new Point(j, i);
 				}
 				// adds the tile button to the interface
 				add(tileButtons[i][j]);
@@ -52,12 +56,13 @@ public class TileManager extends JPanel{
 		}
 		setBoard();
 		mendPlanks();
+		won = false;
 	}
 
 	/**
-	 * Does an action depending on the kind of the pressed button
+	 * Does an action depending on the kind of the pressed button 
 	 * 
-	 * @param p
+	 * @param p Point object that holds the location of the pressed button
 	 */
 	public void act(Point p){
 		// we get the coordinates of the pressed button and depending on what the
@@ -88,7 +93,7 @@ public class TileManager extends JPanel{
 		// poll we are going to put vertical plank
 		if ((p.y - 1) >= 0 && compareTo(tileButtons[p.y - 1][p.x].getTile().identifier, Tile.STUMP1, Tile.STUMP1_MAN,
 				Tile.STUMP2, Tile.STUMP2_MAN, Tile.STUMP3, Tile.STUMP3_MAN)){
-		
+
 			int waterCount = 0;
 			int plankCount = 0;
 			// we count the length of the plank in inventory
@@ -103,7 +108,7 @@ public class TileManager extends JPanel{
 				waterCount++;
 			}
 			// if we try to put a plank in a space that it wont fit we exit the loop
-			if (waterCount < (plankCount)){
+			if (waterCount != plankCount){
 				return;
 			} else{
 				// we put as many planks as the length of the plank in the inventory
@@ -128,7 +133,7 @@ public class TileManager extends JPanel{
 			while ((p.y - waterCount) >= 0 && tileButtons[p.y - waterCount][p.x].getTile().identifier == Tile.WATER){
 				waterCount++;
 			}
-			if (waterCount < plankCount){
+			if (waterCount != plankCount){
 				return;
 			} else{
 				for (int i = 0; i < plankCount; i++){
@@ -150,7 +155,7 @@ public class TileManager extends JPanel{
 					&& tileButtons[p.y][p.x + waterCount].getTile().identifier == Tile.WATER){
 				waterCount++;
 			}
-			if (waterCount < plankCount){
+			if (waterCount != plankCount){
 				return;
 			} else{
 				for (int i = 0; i < plankCount; i++){
@@ -172,7 +177,7 @@ public class TileManager extends JPanel{
 			while ((p.x - waterCount) >= 0 && tileButtons[p.y][p.x - waterCount].getTile().identifier == Tile.WATER){
 				waterCount++;
 			}
-			if (waterCount < plankCount){
+			if (waterCount != plankCount){
 				return;
 			} else{
 				for (int i = 0; i < plankCount; i++){
@@ -223,7 +228,6 @@ public class TileManager extends JPanel{
 		Post root = (Post) tileButtons[man.y][man.x].getTile();
 		Post current = root;
 		travel: while (current != destination){
-			System.out.println("traveling");
 			/*
 			 * this for loop scans through the edges of the current post. If it finds
 			 * an edge that is not traversed it moves to the other node of the edge
@@ -277,7 +281,7 @@ public class TileManager extends JPanel{
 			 * the previous node and search a different path from there
 			 */
 			for (int i = 0; i < current.edges.length; i++){
-				
+
 				if (current.edges[i] == null){// because edges are not put one after the
 																			// other in the array of edges
 					continue;
@@ -312,8 +316,10 @@ public class TileManager extends JPanel{
 			man = current.getTileButton().location;
 			current.getTileButton().setTile(Tile.getTile(tileButtons[p.y][p.x].getTile().identifier + 1));
 			tileButtons[man.y][man.x].getTile().setTileButton(tileButtons[man.y][man.x]);
-			if(man.equals(finish)){
+
+			if (man.equals(finish)){
 				System.out.println("Yeah you won");
+				won = true;
 			}
 		}
 		/*
@@ -349,14 +355,15 @@ public class TileManager extends JPanel{
 						currentPlank.setNodes(null, 0);
 
 					}
+					// if its not a nod that this side is connect then its another plank
 					if ((p.y - 1) >= 0 && compareTo(tileButtons[p.y - 1][p.x].getTile().identifier, Tile.PLANK1)){
 						Plank pl = (Plank) tileButtons[p.y - 1][p.x].getTile();
 						int i = 0;
-						while (i < 2 && currentPlank.adjecentPlanks[i] != null){
+						while (i < 2 && currentPlank.adjecentPlanks[i] != null){//find a free space in the array of connecting planks
 							i++;
 						}
 						if (i < 2)
-							currentPlank.adjecentPlanks[i] = pl;
+							currentPlank.adjecentPlanks[i] = pl;//place it there
 					}
 				}
 				below: {
@@ -474,6 +481,8 @@ public class TileManager extends JPanel{
 	}
 
 	private void setBoard(){
+		// go trough the tile buttons and make the connections between planks and
+		// stumps
 		for (int i = 0; i < tileButtons.length; i++){
 			for (int j = 0; j < tileButtons[i].length; j++){
 				switch (tileButtons[i][j].getTile().identifier) {
@@ -527,7 +536,7 @@ public class TileManager extends JPanel{
 		// this is the most disgusting method i have ever done. I mean look at the
 		// referencing i have done. Do you even reference m8
 
-		// go trough the whole board
+		// go through the whole board
 		for (int i = 0; i < tileButtons.length; i++){
 			for (int j = 0; j < tileButtons[i].length; j++){
 				if (compareTo(tileButtons[i][j].getTile().identifier, Tile.PLANK1, Tile.PLANK2)){
@@ -573,7 +582,7 @@ public class TileManager extends JPanel{
 		// but it works
 	}
 
-	public void eliminateDuplicates(){
+	private void eliminateDuplicates(){
 		/*
 		 * the reason for this methods is because when we call setNodes() a second
 		 * time after it is called in the constructor in planks which have a length
@@ -591,7 +600,13 @@ public class TileManager extends JPanel{
 			}
 		}
 	}
-
+	/**
+	 * Compares one variable to may
+	 * 
+	 * @param arg1 the variable that is going to be compared
+	 * @param args the values we are comparing to
+	 * @return returns true if arg1 i equal to one of the values
+	 */
 	public static boolean compareTo(int arg1, int... args){
 		for (int x : args){
 			if (arg1 == x){
@@ -599,5 +614,58 @@ public class TileManager extends JPanel{
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 *  Loads an new level into the tile manager
+	 *  
+	 * @param l Level object 
+	 */
+	public void loadNewLevel(Level l){
+		level = l.levelNo;
+
+		for (int i = 0; i < l.tiles.length; i++){
+			for (int j = 0; j < l.tiles[i].length; j++){
+				// get the tiles from from the level object and put them in a tile
+				// button
+				tileButtons[i][j].setTile(Tile.getTile(l.tiles[i][j]));
+				tileButtons[i][j].getTile().setTileButton(tileButtons[i][j]);
+
+				if (compareTo(tileButtons[i][j].getTile().identifier, Tile.STUMP1_MAN, Tile.STUMP2_MAN, Tile.STUMP3_MAN,
+						Tile.PLANK1_MAN, Tile.PLANK2_MAN)){
+					// set the location of the man if you can find them
+					man = new Point(j, i);
+				} else if (tileButtons[i][j].getTile().identifier == Tile.STUMP3){
+					finish = new Point(j, i);
+				}
+			}
+		}
+		setBoard();
+		mendPlanks();
+		inventory.empty();
+		won = false;
+	}
+	
+	/**
+	 *  Get the current level loaded into the tile manger
+	 * @return level
+	 */
+	public int getLevel(){
+		return level;
+	}
+	
+	/**
+	 * Returns true if the game is won.
+	 * @return won
+	 */
+	public boolean isWon(){
+		return won;
+	}
+	
+	/**
+	 * Revert the game condition to not won
+	 */
+	public void unWin(){
+		won = false;
 	}
 }
