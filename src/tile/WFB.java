@@ -8,7 +8,7 @@ class WFB extends Tile{
 		super(WFB.getAnIcon(ident), ident);
 	}
 
-	//get an icon corresponding to a constant fed to the methos
+	//get an icon corresponding to a constant fed to the methods
 	private static ImageIcon getAnIcon(int ident){
 		ImageIcon icon;
 		switch (ident) {
