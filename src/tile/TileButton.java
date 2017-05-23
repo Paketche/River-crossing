@@ -35,6 +35,7 @@ class TileButton extends JButton{
 		super(t.icon);
 		tile = t;
 		location = p;
+		setBorderPainted(false);
 	}
 
 	// Changes the tile and the icon of the button
