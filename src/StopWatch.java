@@ -12,7 +12,7 @@ public class StopWatch{
 	}
 	/**
 	 * get the time elapsed since the start of the timer
-	 * @return
+	 * @return stop watch time
 	 */
 	public int getCurrentTime(){
 		end = System.currentTimeMillis();
