@@ -18,14 +18,15 @@ public class UI extends JFrame{
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JPanel northPanel = new JPanel();// panel for the high and current
-																						// scores
-	private JPanel eastPanel = new JPanel(new BorderLayout());// panel for the
-																														// level buttons and
-																														// inventory
+	// panel for the high and current scores
+	private JPanel northPanel = new JPanel();
+	// panel for the level buttons and inventory
+	private JPanel eastPanel = new JPanel(new BorderLayout());
+	// panel for entering a name
 	private JPanel southPanel = new JPanel(new BorderLayout());
-	private JPanel startp = new JPanel();// panel for the level buttons (goes in
-																				// eastPanel)
+
+	// panel for the level buttons (goes ineastPanel)
+	private JPanel startp = new JPanel();
 	public final TileManager tileManager;
 	// buttons for the levels
 	private JButton lvl1;
@@ -39,6 +40,7 @@ public class UI extends JFrame{
 	// holds the number for the current level
 	private int level;
 
+	// holds the names of the high score holders
 	private String[] names = { "Jeff", "John", "Cena" };
 	// holds the scores for the different levels
 	private int[] highestScore = { 100, 75, 50 };
@@ -47,6 +49,7 @@ public class UI extends JFrame{
 	private JLabel timer = new JLabel();
 	private JLabel enterName = new JLabel("Enter your name here:");
 
+	// holds the state of the timer whether its on or not
 	private boolean stopTimer = false;
 
 	/**
@@ -58,14 +61,11 @@ public class UI extends JFrame{
 		// synchronized (frame){
 		while (true){
 			// if the game has been won we want to stop updating the time on the ui
-			if (!frame.getTimerState()&&!frame.tileManager.isWon())
-				frame.getTimer().setText("Time: " + frame.getSWread());
+			if (!frame.getTimerState() && !frame.tileManager.isWon())
+				frame.elapseTime();
 			// if the has been won and there is a new high score we want to change it
 			if (frame.tileManager.isWon()){
 				frame.stopTimer();
-				// we want to set the new score only once; and
-																	// this stops a bug where when you start the
-																	// game again your high score is 0
 			}
 		}
 	}
@@ -115,11 +115,10 @@ public class UI extends JFrame{
 
 		startp.setPreferredSize(new Dimension(64, 150));
 		eastPanel.add(startp, BorderLayout.CENTER);
+		eastPanel.add(tileManager.inventory, BorderLayout.SOUTH);
 		// add the labels for the highest score
 		northPanel.add(highestS);
 		northPanel.add(timer);
-
-		eastPanel.add(tileManager.inventory, BorderLayout.SOUTH);
 
 		textField = new JTextField();
 		textField.addActionListener(new ActionListener() {
@@ -128,7 +127,7 @@ public class UI extends JFrame{
 					newScore();
 			}
 		});
-		southPanel.add(enterName,BorderLayout.WEST);
+		southPanel.add(enterName, BorderLayout.WEST);
 		southPanel.add(textField, BorderLayout.CENTER);
 
 		contentPane.add(southPanel, BorderLayout.SOUTH);
@@ -138,17 +137,23 @@ public class UI extends JFrame{
 		sW.start();
 	}
 
-	public void newScore(){
-
+	private void newScore(){
+		// sets the new score if there is one
 		if (sW.getCurrentTime() < highestScore[level - 1]){
 			highestScore[level - 1] = sW.getCurrentTime();
 			names[level - 1] = textField.getText();
 		}
 		highestS.setText("Fastest run: " + Integer.toString(highestScore[level - 1]) + " secs by " + names[level - 1]);
-		stopTimer = true;
-		tileManager.unWin();
+		stopTimer = true;// stop the stop watch
+		tileManager.unWin();// set the game condition to not won
 	}
 
+	/**
+	 * REturns a string representation between when the stop watch was started and
+	 * when this string was called
+	 * 
+	 * @return Stop watch time
+	 */
 	public String getSWread(){
 		return Integer.toString(sW.getCurrentTime());
 	}
@@ -164,14 +169,23 @@ public class UI extends JFrame{
 		highestS.setText("Fastest run: " + Integer.toString(highestScore[level - 1]) + " secs by " + names[level - 1]);
 	}
 
-	public JLabel getTimer(){
-		return timer;
+	/**
+	 * changes the timer label to the passed time since the start of the stop
+	 * watch
+	 */
+	public void elapseTime(){
+		timer.setText("Time: " + getSWread());
 	}
-
+	/**
+	 * Returns true if the stop watch is running
+	 * @return Stop watch state
+	 */
 	public boolean getTimerState(){
 		return stopTimer;
 	}
-
+	/**
+	 * Stops the timer
+	 */
 	public void stopTimer(){
 		stopTimer = true;
 	}
