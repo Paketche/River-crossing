@@ -59,7 +59,9 @@ class TileHolder extends JPanel{
 			// only 3 of 6 tiles are used so we just fill the other one to make the ui
 			// look better
 			add(tileButtons[i]);
-			add(new JButton(Tile.getTile(Tile.WATER).icon));
+			JButton b = new JButton(Tile.getTile(Tile.WATER).icon);
+			b.setBorderPainted(false);
+			add(b);
 		}
 
 	}
