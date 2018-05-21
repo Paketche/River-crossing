@@ -13,25 +13,25 @@ class WFB extends Tile{
 		ImageIcon icon;
 		switch (ident) {
 			case Tile.WATER:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\water1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\water1.jpg");
 				break;
 			case Tile.BANK1:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\bank1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\bank1.jpg");
 				break;
 			case Tile.BANK2:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\bank2.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\bank2.jpg");
 				break;
 			case Tile.FISH1:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\fish1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\fish1.jpg");
 				break;
 			case Tile.FISH2:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\fish2.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\fish2.jpg");
 				break;
 			case Tile.FISH3:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\fish3.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\fish3.jpg");
 				break;
 			default:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\water1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\water1.jpg");
 		}
 		return icon;
 	}

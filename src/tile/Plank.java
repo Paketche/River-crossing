@@ -56,13 +56,13 @@ class Plank extends Tile{
 		ImageIcon icon;
 		switch (i) {
 			case Tile.PLANK1:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\plank2.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\plank2.jpg");
 				break;
 			case Tile.PLANK2:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\plank1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\plank1.jpg");
 				break;
 			default:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\plank1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\plank1.jpg");
 		}
 		return icon;
 	}

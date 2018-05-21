@@ -22,25 +22,25 @@ class Post extends Tile{
 		ImageIcon icon;
 		switch (i) {
 			case Tile.STUMP1:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump1.jpg");
 				break;
 			case Tile.STUMP1_MAN:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump1_man.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump1_man.jpg");
 				break;
 			case Tile.STUMP2:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump2.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump2.jpg");
 				break;
 			case Tile.STUMP2_MAN:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump2_man.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump2_man.jpg");
 				break;
 			case Tile.STUMP3:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump3.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump3.jpg");
 				break;
 			case Tile.STUMP3_MAN:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump3_man.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump3_man.jpg");
 				break;
 			default:
-				icon = new ImageIcon("src\\tile\\RiverCrossingGraphics\\stump1.jpg");
+				icon = new ImageIcon("RiverCrossingGraphics\\stump1.jpg");
 		}
 		return icon;
 	}

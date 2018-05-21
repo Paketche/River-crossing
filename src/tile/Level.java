@@ -24,7 +24,7 @@ public class Level{
 		
 		// read the file
 		try{
-			FileReader fr = new FileReader("src\\tile\\levels\\" + sb.toString());
+			FileReader fr = new FileReader("Levels\\" + sb.toString());
 			BufferedReader bufferR = new BufferedReader(fr);
 			String buffer;
 			
