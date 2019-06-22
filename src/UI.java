@@ -82,7 +82,7 @@ public class UI extends JFrame{
 		setContentPane(contentPane);
 
 		// give an initial level to the ui and add it
-		tileManager = new TileManager(new Level(2));
+		tileManager = new TileManager(new Level(1));
 		level = tileManager.getLevel();
 		contentPane.add(tileManager, BorderLayout.CENTER);
 
