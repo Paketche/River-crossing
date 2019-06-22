@@ -2,7 +2,7 @@
 
 ## Running the game
 
-To run the game execute `gradlew run` in the command line
+To run the game execute the Run batch file in the command line
 
 ## Objectives of the game
 
